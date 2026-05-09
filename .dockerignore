@@ -1,0 +1,42 @@
+# Docker ignore file
+node_modules/
+.npm
+.eslintcache
+dist/
+build/
+.env.local
+.env.*.local
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+.pytest_cache/
+.tox/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git
+.gitignore
+
+# Tests
+coverage/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/
