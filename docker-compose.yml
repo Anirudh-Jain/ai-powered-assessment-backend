@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: ai-assessment-db
@@ -21,68 +20,16 @@ services:
     networks:
       - assessment-network
 
-  # API Gateway
-  api-gateway:
+  backend:
     build:
-      context: ./services/api-gateway
+      context: ./backend
       dockerfile: Dockerfile
-    container_name: api-gateway
+    container_name: ai-assessment-backend
     ports:
       - "8000:8000"
     environment:
-      AUTH_SERVICE_URL: http://auth:8001
-      EXAM_SERVICE_URL: http://exam:8002
-      QUESTION_SERVICE_URL: http://question:8003
-      GRADING_SERVICE_URL: http://grading:8004
-      SUBMISSION_SERVICE_URL: http://submission:8005
-    depends_on:
-      - postgres
-    networks:
-      - assessment-network
-
-  # Auth Service
-  auth:
-    build:
-      context: ./services/auth
-      dockerfile: Dockerfile
-    container_name: auth-service
-    ports:
-      - "8001:8001"
-    environment:
       DATABASE_URL: postgresql://assessmentuser:assessmentpass123@postgres:5432/assessment_db
       JWT_SECRET: your-secret-key-change-in-production
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - assessment-network
-
-  # Exam Service
-  exam:
-    build:
-      context: ./services/exam
-      dockerfile: Dockerfile
-    container_name: exam-service
-    ports:
-      - "8002:8002"
-    environment:
-      DATABASE_URL: postgresql://assessmentuser:assessmentpass123@postgres:5432/assessment_db
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - assessment-network
-
-  # Question Service
-  question:
-    build:
-      context: ./services/question
-      dockerfile: Dockerfile
-    container_name: question-service
-    ports:
-      - "8003:8003"
-    environment:
-      DATABASE_URL: postgresql://assessmentuser:assessmentpass123@postgres:5432/assessment_db
       OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       postgres:
@@ -90,51 +37,17 @@ services:
     networks:
       - assessment-network
 
-  # Grading Service
-  grading:
-    build:
-      context: ./services/grading
-      dockerfile: Dockerfile
-    container_name: grading-service
-    ports:
-      - "8004:8004"
-    environment:
-      DATABASE_URL: postgresql://assessmentuser:assessmentpass123@postgres:5432/assessment_db
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - assessment-network
-
-  # Submission Service
-  submission:
-    build:
-      context: ./services/submission
-      dockerfile: Dockerfile
-    container_name: submission-service
-    ports:
-      - "8005:8005"
-    environment:
-      DATABASE_URL: postgresql://assessmentuser:assessmentpass123@postgres:5432/assessment_db
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - assessment-network
-
-  # Frontend (Optional - can be run locally with npm run dev)
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: ai-assessment-frontend
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: http://backend:8000
     depends_on:
-      - api-gateway
+      - backend
     networks:
       - assessment-network
 
