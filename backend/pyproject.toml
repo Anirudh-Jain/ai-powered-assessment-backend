@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ai-assessment-backend"
+name = "ai-powered-assessment-backend"
 version = "0.1.0"
-description = "Backend service for AI Assessment Platform"
+description = "Backend service for the AI Powered Assessment Platform"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi==0.115.0",

@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    API_TITLE: str = "AI Assessment Backend"
+    API_TITLE: str = "AI Powered Assessment Backend"
     API_VERSION: str = "0.1.0"
 
     DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://assessmentuser:assessmentpass123@postgres:5432/assessment_db")
