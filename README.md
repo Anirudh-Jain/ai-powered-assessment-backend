@@ -94,6 +94,8 @@ The compose stack includes:
 
 SQLAlchemy models and the request-scoped session dependency live under `src/models/` and `src/db/`. The API handlers remain mock-backed until persistence is wired into the routes. PostgreSQL URLs use the `postgresql+psycopg://` dialect.
 
+Run `uv run alembic upgrade head` to apply migrations. In Docker Compose, use `docker compose run --rm backend alembic upgrade head` before deploying the backend. Create new revisions with `uv run alembic revision --autogenerate -m "describe schema change"`, review the generated file, and commit it with the model changes.
+
 ## Environment Variables
 
 Use `.env.example` as a template.

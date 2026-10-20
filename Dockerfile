@@ -23,6 +23,8 @@ RUN apt-get update \
 
 COPY --from=builder /app/.venv /app/.venv
 COPY src/ /app/src/
+COPY alembic.ini /app/alembic.ini
+COPY migrations/ /app/migrations/
 
 RUN groupadd --system --gid 10001 app \
 	&& useradd --system --uid 10001 --gid app --no-create-home app

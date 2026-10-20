@@ -1,6 +1,9 @@
 """Configuration settings for the backend service."""
+
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from src.db.url import normalize_database_url
 
 
 class Settings(BaseSettings):
@@ -30,6 +33,11 @@ class Settings(BaseSettings):
         if "*" in origins:
             raise ValueError("CORS_ORIGINS must contain explicit origins, not '*'")
         return origins
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def use_psycopg_driver(cls, database_url: str) -> str:
+        return normalize_database_url(database_url)
 
 
 settings = Settings()

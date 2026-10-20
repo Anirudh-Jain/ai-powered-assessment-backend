@@ -1,4 +1,4 @@
-.PHONY: help setup up down logs clean build test frontend-install
+.PHONY: help setup up down logs clean build test frontend-install db-migrate
 
 help:
 	@echo "AI Assessment Platform - Development Commands"
@@ -81,6 +81,9 @@ frontend-dev:
 backend-dev:
 	@echo "Starting backend service locally..."
 	@uv sync --group dev && uv run fastapi dev
+
+db-migrate:
+	@docker-compose run --rm backend alembic upgrade head
 
 db-shell:
 	docker-compose exec postgres psql -U assessmentuser -d assessment_db
