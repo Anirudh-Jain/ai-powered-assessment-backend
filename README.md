@@ -7,7 +7,13 @@ The frontend is stored in a separate repository under `frontend/`.
 ## Repository Layout
 
 ```
-backend/              # FastAPI backend service
+src/
+  config.py
+  main.py
+Dockerfile
+pyproject.toml
+uv.lock
+.python-version
 frontend/             # Separate Next.js frontend repository
 docker-compose.yml    # Local full-stack orchestration
 Makefile              # Development helpers
@@ -28,11 +34,10 @@ README.md             # Backend repository documentation
 ### 1. Prepare Environment
 
 ```powershell
-cd c:\Users\Admin\Project
-copy .env.example .env
+Copy-Item .env.example .env
 ```
 
-Edit `.env` and add your OpenAI API key.
+Set a unique `JWT_SECRET` with at least 32 characters, configure `CORS_ORIGINS`, and add your OpenAI API key to `.env` before starting the services.
 
 ### 2. Start Services
 
@@ -53,6 +58,15 @@ Open http://localhost:3000 in your browser.
 ## Running Locally
 
 ### Backend
+
+Standard psycopg requires the PostgreSQL `libpq` client library. Docker installs it automatically; local development machines must have it installed and available on `PATH`.
+
+```powershell
+uv sync --group dev
+uv run fastapi dev
+```
+
+Or use the Make target from the repository root:
 
 ```powershell
 make backend-dev
@@ -78,16 +92,19 @@ The compose stack includes:
 - `backend` FastAPI service
 - `frontend` optional Next.js container
 
+SQLAlchemy models and the request-scoped session dependency live under `src/models/` and `src/db/`. The API handlers remain mock-backed until persistence is wired into the routes. PostgreSQL URLs use the `postgresql+psycopg://` dialect.
+
 ## Environment Variables
 
 Use `.env.example` as a template.
+Do not use sample database credentials or reuse secrets in production; provide deployment-specific values through the environment.
 
 ```env
 OPENAI_API_KEY=your-openai-api-key-here
 POSTGRES_USER=assessmentuser
 POSTGRES_PASSWORD=assessmentpass123
 POSTGRES_DB=assessment_db
-DATABASE_URL=postgresql://assessmentuser:assessmentpass123@postgres:5432/assessment_db
+DATABASE_URL=postgresql+psycopg://assessmentuser:assessmentpass123@postgres:5432/assessment_db
 JWT_SECRET=your-secret-key-change-in-production
 NEXT_PUBLIC_API_URL=http://localhost:8000
 LOG_LEVEL=INFO
@@ -97,14 +114,14 @@ ENVIRONMENT=development
 
 ## Notes
 
-- `backend/` is the main backend repository.
+- The backend project and source code live at the repository root.
 - `frontend/` is intentionally a separate Git repository.
 - Root `.gitignore` excludes the nested `frontend/` repository.
 
 ## Next Steps
 
-1. Implement backend database models and CRUD logic.
-2. Add OpenAI integration in backend grading/question routes.
-3. Connect frontend to the backend API.
-4. Add authentication and authorization.
-5. Write tests and deploy.
+1. Add Alembic migrations and wire API routes to database sessions.
+2. Add OpenAI integration in grading and question-generation services.
+3. Connect the frontend to persisted API endpoints.
+4. Implement authentication and authorization.
+5. Expand tests and prepare deployment.

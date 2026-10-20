@@ -69,7 +69,7 @@ clean:
 
 test:
 	@echo "Running backend tests..."
-	@cd backend && pytest || true
+	@uv run --group dev pytest
 	@echo ""
 	@echo "Running frontend tests..."
 	@cd frontend && npm test -- --passWithNoTests || true
@@ -80,7 +80,7 @@ frontend-dev:
 
 backend-dev:
 	@echo "Starting backend service locally..."
-	@cd backend && uv venv && uv pip install -r pyproject.toml && python main.py
+	@uv sync --group dev && uv run fastapi dev
 
 db-shell:
 	docker-compose exec postgres psql -U assessmentuser -d assessment_db
